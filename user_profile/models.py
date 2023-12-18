@@ -23,3 +23,12 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
         Profile.objects.create(user=instance)
     instance.profile.save()
 
+
+class Token(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    token = models.TextField(max_length=20, blank=True)
+    status = models.PositiveSmallIntegerField(default=1)
+    valid_till = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "token"
