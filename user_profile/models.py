@@ -10,6 +10,8 @@ class Profile(models.Model):
     address = models.TextField(blank=True)
     picture = models.ImageField(upload_to='profile_pictures/', blank=True)
     bio = models.TextField(blank=True)
+    verified_at = models.DateTimeField(null=True, blank=True)
+    status = models.BooleanField(null=True)
 
     def __str__(self):
         return self.user.username
