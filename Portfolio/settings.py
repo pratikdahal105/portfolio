@@ -156,4 +156,4 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'capstone0023@gmail.com'
-EMAIL_HOST_PASSWORD = 'jqzb ehxr aqqh xmwx'
+EMAIL_HOST_PASSWORD = 'yqgl nqug wsuu crco'
