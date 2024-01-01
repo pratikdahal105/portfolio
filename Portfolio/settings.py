@@ -64,7 +64,8 @@ INSTALLED_APPS = [
     "projects",
     "skills",
     "user_profile",
-    "work"
+    "work", 
+    "socials",
 ]
 
 MIDDLEWARE = [

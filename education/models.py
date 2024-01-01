@@ -1,7 +1,9 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
 
 class Education(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='education')
     school_name = models.CharField(max_length=200, blank=True)
     school_location = models.CharField(max_length=200, blank=True)

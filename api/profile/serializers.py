@@ -1,7 +1,9 @@
+import re
 from django.contrib.auth.models import User
 from rest_framework import serializers, validators
 from django.contrib.auth.hashers import check_password
 from user_profile.models import Profile
+from django.core.validators import RegexValidator
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,15 +16,24 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("username", "password", "email", "profile")
-
+    
         extra_kwargs = {
-            "password": {"write_only": True},
+            "password": {
+                "write_only": True,
+                "validators": [
+                    RegexValidator(
+                        regex=r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$',
+                        message="Password must contain at least one uppercase letter, one lowercase letter, and one digit."
+                    ),
+                ],
+            },
             "email": {
                 "required": True,
                 "allow_blank": False,
                 "validators": [
                     validators.UniqueValidator(
-                        User.objects.all(), "Email Already Exists"
+                        queryset=User.objects.all(),
+                        message="Email Already Exists"
                     )
                 ],
             },
@@ -72,3 +83,9 @@ class PasswordChangeSerializer(serializers.Serializer):
         if not check_password(value, user.password):
             raise serializers.ValidationError("Old password is incorrect")
         return value
+
+class CanadianPhoneNumberValidator:
+    def __call__(self, value):
+        pattern = re.compile(r'^\+?1?\d{10}$')
+        if not pattern.match(value):
+            raise serializers.ValidationError("Phone number must be a valid Canadian phone number.")

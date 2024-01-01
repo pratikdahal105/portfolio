@@ -29,6 +29,10 @@ def login_api(request):
     serializer.is_valid(raise_exception=True)
     user = serializer.validated_data["user"]
 
+    if not user.profile.verified_at:
+        data = {"status": False, "message": "User profile is not verified. Login not allowed.", "data": None}
+        return response(data, status=401)
+
     _, token = AuthToken.objects.create(user)
 
     data = {"status": True, "message": "Login Successfull", "data": {"token": token}}
