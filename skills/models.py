@@ -7,6 +7,8 @@ class Skill(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='skills')
     skill_name = models.CharField(max_length=200, blank=True)
     description = models.TextField(blank=True)
+    logo = models.ImageField(upload_to='skill_logo/', blank=True)
+    highlight = models.BooleanField(blank=True, default=False)
 
     def __str__(self):
         return f"{self.user.username} - {self.skill_name}"

@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     "user_profile",
     "work", 
     "socials",
+    "contact",
 ]
 
 MIDDLEWARE = [
