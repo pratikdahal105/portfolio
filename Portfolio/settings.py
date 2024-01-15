@@ -78,7 +78,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.staticfiles.middleware.StaticFilesMiddleware',
 ]
 
 ROOT_URLCONF = 'Portfolio.urls'
@@ -145,9 +144,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 MEDIA_URL = "media/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
-
-STATIC_ROOT = os.path.normpath(os.path.join(BASE_DIR, 'staticfiles'))
 
 
 # Default primary key field type
