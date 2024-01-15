@@ -2,6 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('works/', views.work_list_create),
-    path('works/<uuid:id>/', views.work_detail),
+    path('contacts/', views.contact_list_create),
+    path('contacts/<uuid:id>/', views.contact_detail),
 ]

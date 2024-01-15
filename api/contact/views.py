@@ -6,6 +6,7 @@ from contact.models import Contact
 from .serializers import ContactSerializer
 from api.profile.decorators import require_authenticated_and_valid_token as valid_token
 
+
 @api_view(['GET', 'POST'])
 def contact_list_create(request, username):
     try:
@@ -24,6 +25,7 @@ def contact_list_create(request, username):
             serializer.save(user=user)
             return Response({"status": True, "message": "Contact created.", "data": serializer.data}, status=status.HTTP_201_CREATED)
         return Response({"status": False, "message": "Contact creation failed.", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET', 'PUT', 'DELETE'])
 @valid_token
