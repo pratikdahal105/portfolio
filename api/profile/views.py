@@ -25,14 +25,13 @@ def test(request):
 
 @api_view(["POST"])
 def login_api(request):
-    response = None
     serializer = AuthTokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     user = serializer.validated_data["user"]
 
     if not user.profile.verified_at:
         data = {"status": False, "message": "User profile is not verified. Login not allowed.", "data": None}
-        return response(data, status=401)
+        return Response(data, status=401)
 
     _, token = AuthToken.objects.create(user)
 
