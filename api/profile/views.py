@@ -39,7 +39,7 @@ def login_api(request):
     user = serializer.validated_data["user"]
 
     if not user.profile.verified_at:
-        data = {"status": False, "message": "User profile is not verified. Login not allowed.", "data": None}
+        data = {"status": False, "message": ["User email is not verified. Login not allowed."], "data": None}
         return Response(data, status=401)
 
     _, token = AuthToken.objects.create(user)
@@ -87,7 +87,7 @@ def registration_api(request):
         token = verification_token(user)
         data = {
             "status": True,
-            "message": "Registration Successful! Please verify your email.",
+            "message": ["Registration Successful! Please verify your email."],
             "data": {"username": user.username, "email": user.email},
         }
         response = Response(data, status=201)
