@@ -25,6 +25,7 @@ def test(request):
 
 @api_view(["POST"])
 def login_api(request):
+    response = None
     serializer = AuthTokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     user = serializer.validated_data["user"]
