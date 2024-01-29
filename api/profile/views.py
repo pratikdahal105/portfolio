@@ -62,10 +62,9 @@ def get_user_data(request):
         "status": True,
         "message": "Authenticated user info",
         "data": {
-            "id": user.id,
             "username": user.username,
             "email": user.email,
-            "phone": profile.phone,
+            "phone": profile.verified_at,
             "status": profile.status
         },
     }
