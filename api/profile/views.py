@@ -242,7 +242,7 @@ def update_password(request):
     except json.JSONDecodeError:
         return JsonResponse({"status": False, "message": 'Invalid JSON data'})
 
-@api_view(["PUT"])
+@api_view(["POST"])
 @valid_token
 def logout_api(request):
         response = Response(None, status=201)
