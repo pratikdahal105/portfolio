@@ -66,8 +66,8 @@ def get_user_data(request):
 
 @api_view(["POST"])
 def registration_api(request):
-    serializer = UserRegistrationSerializer(data=request.data)
 
+    serializer = UserRegistrationSerializer(data=request.data)
     user = None
     
     if serializer.is_valid():
@@ -76,7 +76,6 @@ def registration_api(request):
         _, token = AuthToken.objects.create(user)
 
         token = verification_token(user)
-        send_verification_email(user, token)
         data = {
             "status": True,
             "message": "Registration Successful",
@@ -93,9 +92,10 @@ def registration_api(request):
         "data": {"errors": errors},
     }
     token = None
-    response = Response(data)
+    response = Response(data, status=400)
     response.set_cookie('auth_token', token, httponly=True, secure=True, samesite='None', max_age=7*24*60*60)
-    return Response(response, status=400)
+    return response
+
 
 @api_view(["PUT"])
 @valid_token

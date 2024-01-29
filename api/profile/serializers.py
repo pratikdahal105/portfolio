@@ -11,7 +11,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ("full_name", "phone_number", "address", "picture", "bio", "verified_at", "status")
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer()
+    profile = ProfileSerializer(required=False)
 
     class Meta:
         model = User
@@ -40,7 +40,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        profile_data = validated_data.pop("profile")
+        profile_data = validated_data.pop("profile", {})
 
         user, created = User.objects.get_or_create(
             username=validated_data["username"],
@@ -49,10 +49,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.set_password(validated_data["password"])
         user.save()
 
-        profile, _ = Profile.objects.get_or_create(user=user)
-        for attr, value in profile_data.items():
-            setattr(profile, attr, value)
-        profile.save()
+        if profile_data:
+            profile, _ = Profile.objects.get_or_create(user=user)
+            for attr, value in profile_data.items():
+                setattr(profile, attr, value)
+            profile.save()
 
         return user
     
@@ -67,22 +68,30 @@ class UserProfileUpdateSerializer(UserRegistrationSerializer):
             setattr(instance, attr, value)
         instance.save()
 
-        profile = instance.profile
-        for attr, value in profile_data.items():
-            setattr(profile, attr, value)
-        profile.save()
+        if profile_data:
+            profile = instance.profile
+            for attr, value in profile_data.items():
+                setattr(profile, attr, value)
+            profile.save()
 
         return instance
-    
+
+
 class PasswordChangeSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
-    new_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True, validators=[
+        RegexValidator(
+            regex=r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$',
+            message="New password must contain at least one uppercase letter, one lowercase letter, and one digit."
+        ),
+    ])
 
     def validate_old_password(self, value):
         user = self.context['request'].user
         if not check_password(value, user.password):
             raise serializers.ValidationError("Old password is incorrect")
         return value
+
 
 class CanadianPhoneNumberValidator:
     def __call__(self, value):
