@@ -35,7 +35,11 @@ def login_api(request):
 
     _, token = AuthToken.objects.create(user)
 
-    data = {"status": True, "message": "Login Successfull", "data": {"token": token}}
+    data = {
+            "status": True, 
+            "message": "Login Successfull", 
+            "data": {"username": user.username, "email": user.email},
+        }
     response = Response(data, status=200)
     response.set_cookie('auth_token', token, httponly=True, secure=True, samesite='None', max_age=7*24*60*60)
     return response
@@ -64,6 +68,8 @@ def get_user_data(request):
 def registration_api(request):
     serializer = UserRegistrationSerializer(data=request.data)
 
+    user = None
+    
     if serializer.is_valid():
         user = serializer.save()
 
@@ -74,9 +80,11 @@ def registration_api(request):
         data = {
             "status": True,
             "message": "Registration Successful",
-            "data": {"user_id": user.id, "token": token},
+            "data": {"username": user.username, "email": user.email},
         }
-        return Response(data, status=201)
+        response = Response(data, status=201)
+        response.set_cookie('auth_token', token, httponly=True, secure=True, samesite='None', max_age=7*24*60*60)
+        return response
 
     errors = serializer.errors
     data = {
@@ -84,8 +92,8 @@ def registration_api(request):
         "message": "Registration Failed",
         "data": {"errors": errors},
     }
-    _, token = AuthToken.objects.create(user)
-    response = Response(data, status=200)
+    token = None
+    response = Response(data)
     response.set_cookie('auth_token', token, httponly=True, secure=True, samesite='None', max_age=7*24*60*60)
     return Response(response, status=400)
 
