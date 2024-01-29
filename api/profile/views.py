@@ -26,7 +26,16 @@ def test(request):
 @api_view(["POST"])
 def login_api(request):
     serializer = AuthTokenSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
+    if(serializer.is_valid() == False):
+        error_messages = extract_errors(serializer.errors)
+        data = {
+            "status": False,
+            "message": error_messages,
+            "data": None,
+        }
+        response = Response(data, status=400)
+        return response
+
     user = serializer.validated_data["user"]
 
     if not user.profile.verified_at:
@@ -78,22 +87,20 @@ def registration_api(request):
         token = verification_token(user)
         data = {
             "status": True,
-            "message": "Registration Successful",
+            "message": "Registration Successful! Please verify your email.",
             "data": {"username": user.username, "email": user.email},
         }
         response = Response(data, status=201)
         response.set_cookie('auth_token', token, httponly=True, secure=True, samesite='None', max_age=7*24*60*60)
         return response
 
-    errors = serializer.errors
+    error_messages = extract_errors(serializer.errors)
     data = {
         "status": False,
-        "message": "Registration Failed",
-        "data": {"errors": errors},
+        "message": error_messages,
+        "data": None,
     }
-    token = None
     response = Response(data, status=400)
-    response.set_cookie('auth_token', token, httponly=True, secure=True, samesite='None', max_age=7*24*60*60)
     return response
 
 
@@ -235,3 +242,9 @@ def update_password(request):
 
     except json.JSONDecodeError:
         return JsonResponse({"status": False, "message": 'Invalid JSON data'})
+    
+def extract_errors(errors):
+    error_messages = []
+    for key, value in errors.items():
+        error_messages.extend(value)
+    return error_messages or ["Unknown error"]
