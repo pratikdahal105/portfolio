@@ -241,7 +241,14 @@ def update_password(request):
 
     except json.JSONDecodeError:
         return JsonResponse({"status": False, "message": 'Invalid JSON data'})
-    
+
+@api_view(["PUT"])
+@valid_token
+def logout_api(request):
+        response = Response(None, status=201)
+        response.set_cookie('auth_token', None, httponly=True, secure=True, samesite='None', max_age=7*24*60*60)
+        return response
+
 def extract_errors(errors):
     error_messages = []
     for key, value in errors.items():
