@@ -22,7 +22,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
                 "write_only": True,
                 "validators": [
                     RegexValidator(
-                        regex=r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$',
+                        regex=r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{6,}$',
                         message="Password must contain at least one uppercase letter, one lowercase letter, and one digit."
                     ),
                 ],
@@ -81,7 +81,7 @@ class PasswordChangeSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True, validators=[
         RegexValidator(
-            regex=r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$',
+            regex=r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{6,}$',
             message="New password must contain at least one uppercase letter, one lowercase letter, and one digit."
         ),
     ])
