@@ -9,13 +9,14 @@ from user_profile.models import Token
 import jwt
 import random
 import string
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from datetime import datetime
 from django.conf import settings
 from django.utils.timezone import now
 from .mail import verification_token, send_verification_email, send_password_email
 import json
 from django.http import JsonResponse
+from django.shortcuts import redirect
 
 @api_view(["GET"])
 def test(request):
@@ -84,6 +85,7 @@ def registration_api(request):
         _, token = AuthToken.objects.create(user)
 
         token = verification_token(user)
+        send_verification_email(user, token)
         data = {
             "status": True,
             "message": ["Registration Successful! Please verify your email."],
@@ -158,7 +160,8 @@ def verify_email(request):
         profile = user.profile
         profile.verified_at = datetime.now()
         profile.save()
-        return JsonResponse({"status": True, "message": "Email verified successfully"})
+        frontend_redirect_url = 'http://localhost:5173/login'  # Replace with your actual frontend route
+        return redirect(frontend_redirect_url)
     except jwt.ExpiredSignatureError:
         return JsonResponse({"status": False, "message": "Token has expired"})
     except jwt.InvalidTokenError:

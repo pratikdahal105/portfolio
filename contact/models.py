@@ -7,8 +7,8 @@ class Contact(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='contact')
     mail_from = models.CharField(max_length=200, blank=True)
     content = models.TextField(blank=True)
-    subject = models.CharField(max_length=200, blank=True)
-    contact = models.CharField(max_length=200, blank=True)
+    # subject = models.CharField(max_length=200, blank=True)
+    full_name = models.CharField(max_length=200, blank=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.award_name}"
