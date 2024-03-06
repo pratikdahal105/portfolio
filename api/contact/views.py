@@ -8,14 +8,15 @@ from api.profile.decorators import require_authenticated_and_valid_token as vali
 from django.utils import timezone
 
 @api_view(['GET', 'POST'])
-def contact_list_create(request, username):
+def contact_list_create(request):
     try:
+        username = request.POST.get('username')
         user = User.objects.get(username=username)
     except User.DoesNotExist:
         return Response({"status": False, "message": "User not found.", "data": None}, status=status.HTTP_404_NOT_FOUND)
-    if request.user:
+    if user:
         if request.method == 'GET':
-            contacts = Contact.objects.filter(user=request.user)
+            contacts = Contact.objects.filter(user=user)
             serializer = ContactSerializer(contacts, many=True)
             return Response({"status": True, "message": "Contact list retrieved.", "data": serializer.data})
 
@@ -39,7 +40,7 @@ def contact_list_create(request, username):
         # Your existing code to handle contact creation
         serializer = ContactSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save(user=user)
             return Response({"status": True, "message": "Contact created.", "data": serializer.data}, status=201)
         return Response({"status": False, "message": "Contact creation failed.", "data": serializer.errors}, status=400)
 
