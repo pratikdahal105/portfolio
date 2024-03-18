@@ -28,15 +28,20 @@ def contact_list_create(request):
             # Pass the user to the serializer
             serializer = ContactSerializer(data=request.data, context={'user': user})
             if serializer.is_valid():
-                serializer.save()
+                # Change keys to match frontend
+                serializer.validated_data['subject'] = serializer.validated_data.pop('full_name', None)
+                serializer.validated_data['message'] = serializer.validated_data.pop('content', None)
+                serializer.validated_data['from_email'] = serializer.validated_data.pop('mail_from', None)
                 
-                # Fetch email details from frontend payload
-                subject = request.POST.get('subject')
-                message = request.POST.get('message')
-                from_email = request.POST.get('from_email')
+                serializer.save()
 
-                # Send email notification to the user
-                send_contact_notification_email(user, subject, message, from_email)
+                # Fetch email details from frontend payload
+                subject = serializer.validated_data.get('subject')
+                message = serializer.validated_data.get('message')
+                from_email = serializer.validated_data.get('from_email')
+
+                if subject and message and from_email:
+                    send_contact_notification_email(user, subject, message, from_email)
                 
                 return Response({"status": True, "message": "Contact created.", "data": serializer.data}, status=status.HTTP_201_CREATED)
             return Response({"status": False, "message": "Contact creation failed.", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
