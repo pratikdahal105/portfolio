@@ -31,9 +31,9 @@ def contact_list_create(request):
                 serializer.save()
                 
                 # Fetch email details from frontend payload
-                subject = request.data.POST.get('subject')
-                message = request.data.POST.get('message')
-                from_email = request.data.POST.get('from_email')
+                subject = request.POST.get('subject')
+                message = request.POST.get('message')
+                from_email = request.POST.get('from_email')
 
                 # Send email notification to the user
                 send_contact_notification_email(user, subject, message, from_email)
