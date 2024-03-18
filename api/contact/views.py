@@ -8,6 +8,7 @@ from .serializers import ContactSerializer
 from api.profile.decorators import require_authenticated_and_valid_token as valid_token
 from django.utils import timezone
 from datetime import datetime
+from django.core.mail import send_mail
 
 @api_view(['GET', 'POST'])
 def contact_list_create(request):
@@ -28,11 +29,23 @@ def contact_list_create(request):
             serializer = ContactSerializer(data=request.data, context={'user': user})
             if serializer.is_valid():
                 serializer.save()
+                
+                # Fetch email details from frontend payload
+                subject = request.data.get('subject')
+                message = request.data.get('message')
+                from_email = request.data.get('from_email')
+
+                # Send email notification to the user
+                send_contact_notification_email(user, subject, message, from_email)
+                
                 return Response({"status": True, "message": "Contact created.", "data": serializer.data}, status=status.HTTP_201_CREATED)
             return Response({"status": False, "message": "Contact creation failed.", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
     return Response({"status": False, "message": "Method not allowed."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+def send_contact_notification_email(user, subject, message, from_email):
+    recipient_list = [user.email]
+    send_mail(subject, message, from_email, recipient_list)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 @valid_token
