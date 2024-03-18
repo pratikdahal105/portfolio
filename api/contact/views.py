@@ -46,8 +46,9 @@ def contact_list_create(request):
     return Response({"status": False, "message": "Method not allowed."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 def send_contact_notification_email(user, subject, message, from_email):
+    email_message = f"From: {from_email}\n\n{message}"
     recipient_list = [user.email]
-    send_mail(subject, message, from_email, recipient_list)
+    send_mail(subject, email_message, from_email, recipient_list)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 @valid_token
