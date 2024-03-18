@@ -36,11 +36,13 @@ ALLOWED_HOSTS = ["*"]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://findmyportfolio.netlify.app",
+    "https://angsherpa.netlify.app",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "https://findmyportfolio.netlify.app",
+    "https://angsherpa.netlify.app",
 ]
 
 CORS_ALLOW_HEADERS = [
